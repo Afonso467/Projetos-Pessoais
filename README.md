@@ -1,2 +1,2 @@
 # Projetos-Pessoais
-Projetos pessoais
+Projetos pessoais que vão consistir em jogos, headers, footers, etc..
