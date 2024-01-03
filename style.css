@@ -20,8 +20,8 @@ body{
 #container{
     border: 2px solid white;
     border-radius: 10px;
-    width: 625px;
-    height: 769px;
+    width: 503px;
+    height: 651px;
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
