@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedra Papel Tesoura</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+      body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            flex-direction: column;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        #botoes {
+            display: flex;
+            gap: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fa-solid, .fas {
+            margin-left: 6px;
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-top: 3px;
+        }
+
+        button i {
+            margin-top: 10px;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        #contador {
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+
+        #reset {
+            margin-top: 10px;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Pedra, Papel, Tesoura</h1>
+    <div id="botoes">
+        <button onclick="jogar('pedra')">
+            <div>Pedra</div>
+            <i class="fas fa-hand-rock"></i>
+        </button>
+        <button onclick="jogar('papel')">
+            <div>Papel</div>
+            <i class="fas fa-hand-paper"></i>
+        </button>
+        <button onclick="jogar('tesoura')">
+            <div>Tesoura</div>
+            <i class="fas fa-hand-scissors"></i>
+        </button>
+    </div>
+    <p id="resultado"></p>
+    <p id="contador">Vitórias: <span id="pontuacao">0</span></p>
+    <button id="reset" onclick="resetarContador()">Resetar Contador</button>
+
+    <script>
+
+        let contador = 0;
+
+        function jogar(escolhaDoUsuario) {
+            const opcoes = ['pedra', 'papel', 'tesoura'];
+            const escolhaDoBot = opcoes[Math.floor(Math.random() * opcoes.length)];
+
+            const resultado = verificarVencedor(escolhaDoUsuario, escolhaDoBot);
+
+            document.getElementById('resultado').innerHTML = `<strong>Você:</strong> ${iconeEscolha(escolhaDoUsuario)} <strong>Bot:</strong> ${iconeEscolha(escolhaDoBot)}<br>${resultado}`;
+
+            // Incrementar o contador apenas se o usuário ganhar
+            if (resultado.includes('ganhou')) {
+                contador++;
+                document.getElementById('pontuacao').innerText = contador;
+            }
+        }
+
+        function resetarContador() {
+            // Resetar o contador
+            contador = 0;
+            document.getElementById('pontuacao').innerText = contador;
+        }
+
+        function verificarVencedor(usuario, bot) {
+            if (
+                (usuario === 'pedra' && bot === 'tesoura') ||
+                (usuario === 'papel' && bot === 'pedra') ||
+                (usuario === 'tesoura' && bot === 'papel')
+            ) {
+                return 'Você ganhou!';
+            } else if (
+                (bot === 'pedra' && usuario === 'tesoura') ||
+                (bot === 'papel' && usuario === 'pedra') ||
+                (bot === 'tesoura' && usuario === 'papel')
+            ) {
+                return 'Você perdeu. Tente novamente!';
+            } else {
+                return 'Empate';
+            }
+        }
+
+        function iconeEscolha(escolha) {
+            if (escolha === 'pedra') {
+                return '<i class="fas fa-hand-rock"></i>';
+            } else if (escolha === 'papel') {
+                return '<i class="fas fa-hand-paper"></i>';
+            } else if (escolha === 'tesoura') {
+                return '<i class="fas fa-hand-scissors"></i>';
+            }
+            return '';
+        }
+         function jogar(escolhaDoUsuario) {
+            const opcoes = ['pedra', 'papel', 'tesoura'];
+            const escolhaDoBot = opcoes[Math.floor(Math.random() * opcoes.length)];
+
+            const resultado = verificarVencedor(escolhaDoUsuario, escolhaDoBot);
+
+            document.getElementById('resultado').innerHTML = `<strong>Você:</strong> ${iconeEscolha(escolhaDoUsuario)} <strong>Bot:</strong> ${iconeEscolha(escolhaDoBot)}<br>${resultado}`;
+        }
+
+        function verificarVencedor(usuario, bot) {
+            if (usuario === bot) {
+                return 'Empate';
+            } else if (
+                (usuario === 'pedra' && bot === 'tesoura') ||
+                (usuario === 'papel' && bot === 'pedra') ||
+                (usuario === 'tesoura' && bot === 'papel')
+            ) {
+                return '<strong>Você ganhou!</strong>';
+            } else {
+                return '<strong>Você perdeu. Tente novamente!</strong>';
+            }
+        }
+
+        function iconeEscolha(escolha) {
+            if (escolha === 'pedra') {
+                return '<i class="fas fa-hand-rock"></i>';
+            } else if (escolha === 'papel') {
+                return '<i class="fas fa-hand-paper"></i>';
+            } else if (escolha === 'tesoura') {
+                return '<i class="fas fa-hand-scissors"></i>';
+            }
+            return '';
+        }
+    </script>
+</body>
+</html>
