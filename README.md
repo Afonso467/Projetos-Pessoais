@@ -1,3 +1,3 @@
 # Projetos-Pessoais
-Projetos pessoais que vão consistir em jogos, headers, footers, etc
-Se quiserem ver o site passem para o login usando /login
+Projetos Pessoais espero que gostem!
+Login cabeleireiro - para ver basta escrevem login a seguir ao Projetos-Pessoais como neste exemplo -> https://afonso467.github.io/Projetos-Pessoais/login
