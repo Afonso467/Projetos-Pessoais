@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-      body {
+        body {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -16,25 +16,38 @@
             margin: 0;
             font-family: 'Arial', sans-serif;
             flex-direction: column;
+            background-color: #f2f2f2;
         }
 
         h1 {
             text-align: center;
             font-size: 2rem;
             margin-bottom: 20px;
+            color: #333;
         }
 
         #botoes {
             display: flex;
             gap: 20px;
+            border-radius: 5px;
+            overflow: hidden;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 15px 30px;
             font-size: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 0;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
         }
 
         .fa-solid, .fas {
@@ -44,25 +57,40 @@
             margin-top: 3px;
         }
 
-        button i {
-            margin-top: 10px;
-        }
-
         #resultado {
             margin-top: 20px;
             font-size: 1.5rem;
             text-align: center;
+            color: #333;
         }
 
-        #contador {
+        #contadores {
+            display: flex;
+            justify-content: center;
+            margin: -11px;
+            gap: 18px;
+        }
+
+        .contador {
             font-size: 1.2rem;
-            margin-top: 10px;
+            color: #555;
         }
 
-        #reset {
+        #reset-placar {
             margin-top: 10px;
+            font-size: 16px;
+            padding: 10px;
+            cursor: pointer;
+            background-color: #2ecc71;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
-        
+
+        #reset-placar:hover {
+            background-color: #27ae60;
+        }
     </style>
 </head>
 <body>
@@ -82,12 +110,16 @@
         </button>
     </div>
     <p id="resultado"></p>
-    <p id="contador">Vitórias: <span id="pontuacao">0</span></p>
-    <button id="reset" onclick="resetarContador()">Resetar Contador</button>
+    <div id="contadores">
+        <p class="contador">Tu: <span id="pontuacao">0</span></p>
+        <p class="contador"> Bot: <span id="pontuacao-bot">0</span></p>
+    </div>
+    <button id="reset-placar" onclick="resetarContador()">Resetar Placar</button>
 
     <script>
 
-        let contador = 0;
+        let contadorJogador = 0;
+        let contadorBot = 0;
 
         function jogar(escolhaDoUsuario) {
             const opcoes = ['pedra', 'papel', 'tesoura'];
@@ -97,17 +129,23 @@
 
             document.getElementById('resultado').innerHTML = `<strong>Você:</strong> ${iconeEscolha(escolhaDoUsuario)} <strong>Bot:</strong> ${iconeEscolha(escolhaDoBot)}<br>${resultado}`;
 
-            // Incrementar o contador apenas se o usuário ganhar
+            // Incrementar o contador do jogador ou do bot
             if (resultado.includes('ganhou')) {
-                contador++;
-                document.getElementById('pontuacao').innerText = contador;
+                contadorJogador++;
+            } else if (resultado.includes('perdeu')) {
+                contadorBot++;
             }
+
+            document.getElementById('pontuacao').innerText = contadorJogador;
+            document.getElementById('pontuacao-bot').innerText = contadorBot;
         }
 
         function resetarContador() {
-            // Resetar o contador
-            contador = 0;
-            document.getElementById('pontuacao').innerText = contador;
+            // Resetar os contadores
+            contadorJogador = 0;
+            contadorBot = 0;
+            document.getElementById('pontuacao').innerText = contadorJogador;
+            document.getElementById('pontuacao-bot').innerText = contadorBot;
         }
 
         function verificarVencedor(usuario, bot) {
@@ -125,39 +163,6 @@
                 return 'Você perdeu. Tente novamente!';
             } else {
                 return 'Empate';
-            }
-        }
-
-        function iconeEscolha(escolha) {
-            if (escolha === 'pedra') {
-                return '<i class="fas fa-hand-rock"></i>';
-            } else if (escolha === 'papel') {
-                return '<i class="fas fa-hand-paper"></i>';
-            } else if (escolha === 'tesoura') {
-                return '<i class="fas fa-hand-scissors"></i>';
-            }
-            return '';
-        }
-         function jogar(escolhaDoUsuario) {
-            const opcoes = ['pedra', 'papel', 'tesoura'];
-            const escolhaDoBot = opcoes[Math.floor(Math.random() * opcoes.length)];
-
-            const resultado = verificarVencedor(escolhaDoUsuario, escolhaDoBot);
-
-            document.getElementById('resultado').innerHTML = `<strong>Você:</strong> ${iconeEscolha(escolhaDoUsuario)} <strong>Bot:</strong> ${iconeEscolha(escolhaDoBot)}<br>${resultado}`;
-        }
-
-        function verificarVencedor(usuario, bot) {
-            if (usuario === bot) {
-                return 'Empate';
-            } else if (
-                (usuario === 'pedra' && bot === 'tesoura') ||
-                (usuario === 'papel' && bot === 'pedra') ||
-                (usuario === 'tesoura' && bot === 'papel')
-            ) {
-                return '<strong>Você ganhou!</strong>';
-            } else {
-                return '<strong>Você perdeu. Tente novamente!</strong>';
             }
         }
 
