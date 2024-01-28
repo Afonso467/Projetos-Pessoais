@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo da Velha</title>
+    <title>Jogo do Galo</title>
 
     <style>
         body {
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
             height: 100vh;
             margin: 0;
         }
@@ -18,6 +19,7 @@
             display: grid;
             grid-template-columns: repeat(3, 100px);
             grid-gap: 5px;
+            margin-bottom: 20px;
         }
 
         .cell {
@@ -34,27 +36,49 @@
             background-color: #eee;
         }
 
-        #reset-button {
-            margin-top: 20px;
+        #reset-buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        #reset-button,
+        #score-reset-button {
             font-size: 16px;
             padding: 10px;
             cursor: pointer;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #score {
+            font-size: 24px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
+    <div id="score">Placar: X - 0 | O - 0</div>
+    
     <div id="game-board">
         <!-- As células do tabuleiro serão preenchidas dinamicamente pelo JavaScript -->
     </div>
 
-    <button id="reset-button" onclick="resetGame()">Resetar Jogo</button>
+    <div id="reset-buttons">
+        <button id="reset-button" onclick="resetGame()">Resetar Jogo</button>
+        <button id="score-reset-button" onclick="resetScore()">Resetar Placar</button>
+    </div>
 
     <script>
         let currentPlayer = 'X';
         let gameBoard = ['', '', '', '', '', '', '', '', ''];
+        let scoreX = 0;
+        let scoreO = 0;
 
         document.addEventListener('DOMContentLoaded', () => {
             const board = document.getElementById('game-board');
+            const scoreDisplay = document.getElementById('score');
 
             // Cria as células do tabuleiro
             for (let i = 0; i < 9; i++) {
@@ -74,6 +98,7 @@
                     updateBoard();
                     if (checkWinner()) {
                         alert(`Jogador ${currentPlayer} venceu!`);
+                        updateScore();
                     } else if (gameBoard.every(cell => cell !== '')) {
                         alert('O jogo terminou em empate!');
                     } else {
@@ -107,6 +132,15 @@
                     gameBoard[pattern[1]] === gameBoard[pattern[2]]
                 );
             }
+
+            function updateScore() {
+                if (currentPlayer === 'X') {
+                    scoreX++;
+                } else {
+                    scoreO++;
+                }
+                scoreDisplay.textContent = `Placar: X - ${scoreX} | O - ${scoreO}`;
+            }
         });
 
         function resetGame() {
@@ -114,6 +148,13 @@
             cells.forEach(cell => (cell.textContent = ''));
             currentPlayer = 'X';
             gameBoard = ['', '', '', '', '', '', '', '', ''];
+        }
+
+        function resetScore() {
+            scoreX = 0;
+            scoreO = 0;
+            const scoreDisplay = document.getElementById('score');
+            scoreDisplay.textContent = `Placar: X - 0 | O - 0`;
         }
     </script>
 </body>
