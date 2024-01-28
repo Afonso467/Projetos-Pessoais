@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quatro em Linha</title>
+</head>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+    }
+
+    .board {
+        display: grid;
+        grid-template-columns: repeat(7, 60px);
+        grid-gap: 5px;
+        border: 2px solid #333;
+        padding: 5px;
+        background-color: #2196F3;
+    }
+
+    .cell {
+        width: 60px;
+        height: 60px;
+        border: 2px solid #333;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+</style>
+<body>
+    <div class="board" id="board"></div>
+    <button id="reset-button">Resetar Placard</button>
+    <div id="scoreboard">
+        <p>Jogador X: <span id="score-X">0</span></p>
+        <p>Jogador O: <span id="score-O">0</span></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    const board = document.getElementById('board');
+    const resetButton = document.getElementById('reset-button');
+    const scoreXElement = document.getElementById('score-X');
+    const scoreOElement = document.getElementById('score-O');
+
+    const ROWS = 6;
+    const COLS = 7;
+    let currentPlayer = 'X';
+    let gameBoard = createBoard();
+    let score = { X: 0, O: 0 };
+
+    function createBoard() {
+        return Array.from({ length: ROWS }, () => Array(COLS).fill(''));
+    }
+
+    function renderBoard() {
+        board.innerHTML = '';
+        gameBoard.forEach((row, rowIndex) => {
+            row.forEach((cell, colIndex) => {
+                const cellElement = document.createElement('div');
+                cellElement.classList.add('cell');
+                cellElement.dataset.row = rowIndex;
+                cellElement.dataset.col = colIndex;
+                cellElement.textContent = cell;
+                cellElement.addEventListener('click', handleCellClick);
+                board.appendChild(cellElement);
+            });
+        });
+    }
+
+    function handleCellClick(event) {
+        const { row, col } = event.target.dataset;
+
+        if (gameBoard[row][col] === '' && !checkWinner()) {
+            gameBoard[row][col] = currentPlayer;
+            renderBoard();
+            if (checkWinner()) {
+                alert(`Jogador ${currentPlayer} venceu!`);
+                updateScore();
+                resetGame();
+            } else if (isBoardFull()) {
+                alert('O jogo terminou em empate!');
+                resetGame();
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            }
+        }
+    }
+
+    function checkWinner() {
+    // Verificar horizontalmente
+    for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col <= COLS - 4; col++) {
+            if (
+                gameBoard[row][col] !== '' &&
+                gameBoard[row][col] === gameBoard[row][col + 1] &&
+                gameBoard[row][col] === gameBoard[row][col + 2] &&
+                gameBoard[row][col] === gameBoard[row][col + 3]
+            ) {
+                return true;
+            }
+        }
+    }
+
+    // Verificar verticalmente
+    for (let row = 0; row <= ROWS - 4; row++) {
+        for (let col = 0; col < COLS; col++) {
+            if (
+                gameBoard[row][col] !== '' &&
+                gameBoard[row][col] === gameBoard[row + 1][col] &&
+                gameBoard[row][col] === gameBoard[row + 2][col] &&
+                gameBoard[row][col] === gameBoard[row + 3][col]
+            ) {
+                return true;
+            }
+        }
+    }
+
+    // Verificar diagonalmente (ascendente)
+    for (let row = 3; row < ROWS; row++) {
+        for (let col = 0; col <= COLS - 4; col++) {
+            if (
+                gameBoard[row][col] !== '' &&
+                gameBoard[row][col] === gameBoard[row - 1][col + 1] &&
+                gameBoard[row][col] === gameBoard[row - 2][col + 2] &&
+                gameBoard[row][col] === gameBoard[row - 3][col + 3]
+            ) {
+                return true;
+            }
+        }
+    }
+
+    // Verificar diagonalmente (descendente)
+    for (let row = 0; row <= ROWS - 4; row++) {
+        for (let col = 0; col <= COLS - 4; col++) {
+            if (
+                gameBoard[row][col] !== '' &&
+                gameBoard[row][col] === gameBoard[row + 1][col + 1] &&
+                gameBoard[row][col] === gameBoard[row + 2][col + 2] &&
+                gameBoard[row][col] === gameBoard[row + 3][col + 3]
+            ) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+    function isBoardFull() {
+        return gameBoard.every(row => row.every(cell => cell !== ''));
+    }
+
+    function resetGame() {
+        gameBoard = createBoard();
+        currentPlayer = 'X';
+        renderBoard();
+    }
+
+    function updateScore() {
+        score[currentPlayer]++;
+        scoreXElement.textContent = score.X;
+        scoreOElement.textContent = score.O;
+    }
+
+    resetButton.addEventListener('click', () => {
+        score = { X: 0, O: 0 };
+        scoreXElement.textContent = score.X;
+        scoreOElement.textContent = score.O;
+        resetGame();
+    });
+
+    renderBoard();
+});
+
+
+    </script>
+</body>
+</html>

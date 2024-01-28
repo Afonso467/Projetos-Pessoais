@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quatro em Linha contra o Bot</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(7, 60px);
+            grid-gap: 5px;
+            border: 2px solid #333;
+            padding: 5px;
+            background-color: #2196F3;
+        }
+
+        .cell {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #333;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        #reset-button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        #scoreboard {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="board" id="board"></div>
+    <button id="reset-button">Resetar Placard</button>
+    <div id="scoreboard">
+        <p>Jogador X: <span id="score-X">0</span></p>
+        <p>Jogador O: <span id="score-O">0</span></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const board = document.getElementById('board');
+            const resetButton = document.getElementById('reset-button');
+            const scoreXElement = document.getElementById('score-X');
+            const scoreOElement = document.getElementById('score-O');
+
+            const ROWS = 6;
+            const COLS = 7;
+            let currentPlayer = 'X';
+            let gameBoard = createBoard();
+            let score = { X: 0, O: 0 };
+
+            function createBoard() {
+                return Array.from({ length: ROWS }, () => Array(COLS).fill(''));
+            }
+
+            function renderBoard() {
+                board.innerHTML = '';
+                gameBoard.forEach((row, rowIndex) => {
+                    row.forEach((cell, colIndex) => {
+                        const cellElement = document.createElement('div');
+                        cellElement.classList.add('cell');
+                        cellElement.dataset.row = rowIndex;
+                        cellElement.dataset.col = colIndex;
+                        cellElement.textContent = cell;
+                        cellElement.addEventListener('click', handleCellClick);
+                        board.appendChild(cellElement);
+                    });
+                });
+            }
+
+            function handleCellClick(event) {
+                const { row, col } = event.target.dataset;
+
+                if (gameBoard[row][col] === '' && !checkWinner()) {
+                    gameBoard[row][col] = currentPlayer;
+                    renderBoard();
+                    if (checkWinner()) {
+                        alert(`Jogador ${currentPlayer} venceu!`);
+                        updateScore();
+                        resetGame();
+                    } else if (isBoardFull()) {
+                        alert('O jogo terminou em empate!');
+                        resetGame();
+                    } else {
+                        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                        if (currentPlayer === 'O') {
+                            setTimeout(makeBotMove, 500);
+                        }
+                    }
+                }
+            }
+
+            function makeBotMove() {
+                const availableMoves = [];
+                for (let col = 0; col < COLS; col++) {
+                    if (gameBoard[0][col] === '') {
+                        availableMoves.push(col);
+                    }
+                }
+
+                if (availableMoves.length > 0) {
+                    const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+                    const botRow = findAvailableRow(randomMove);
+                    gameBoard[botRow][randomMove] = 'O';
+                    renderBoard();
+
+                    if (checkWinner()) {
+                        alert('Jogador O (Bot) venceu!');
+                        updateScore();
+                        resetGame();
+                    } else if (isBoardFull()) {
+                        alert('O jogo terminou em empate!');
+                        resetGame();
+                    } else {
+                        currentPlayer = 'X';
+                    }
+                }
+            }
+
+            function findAvailableRow(col) {
+                for (let row = ROWS - 1; row >= 0; row--) {
+                    if (gameBoard[row][col] === '') {
+                        return row;
+                    }
+                }
+                return -1; 
+            }
+
+            function checkWinner() {
+            // Verificar horizontalmente e verticalmente
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    if (checkLine(row, col, 0, 1) || checkLine(row, col, 1, 0) || checkLine(row, col, 1, 1) || checkLine(row, col, 1, -1)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function checkLine(startRow, startCol, rowIncrement, colIncrement) {
+            const player = gameBoard[startRow][startCol];
+            if (player === '') return false; // Não pode haver vitória com célula vazia
+            for (let i = 1; i < 4; i++) {
+                const row = startRow + i * rowIncrement;
+                const col = startCol + i * colIncrement;
+                if (row < 0 || row >= ROWS || col < 0 || col >= COLS || gameBoard[row][col] !== player) {
+                    return false; // A linha não é vencedora
+                }
+            }
+            return true; // Encontrou uma linha vencedora
+        }
+
+
+            function isBoardFull() {
+                return gameBoard.every(row => row.every(cell => cell !== ''));
+            }
+
+            function resetGame() {
+                gameBoard = createBoard();
+                currentPlayer = 'X';
+                renderBoard();
+            }
+
+            function updateScore() {
+                score[currentPlayer]++;
+                scoreXElement.textContent = score.X;
+                scoreOElement.textContent = score.O;
+            }
+
+            resetButton.addEventListener('click', () => {
+                score = { X: 0, O: 0 };
+                scoreXElement.textContent = score.X;
+                scoreOElement.textContent = score.O;
+                resetGame();
+            });
+
+            renderBoard();
+        });
+    </script>
+</body>
+</html>
